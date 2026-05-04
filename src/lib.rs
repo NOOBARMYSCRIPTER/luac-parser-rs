@@ -2,6 +2,18 @@
 
 use bincode::{Decode, Encode};
 use std::{borrow::Cow, rc::Rc};
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub fn parse_lua_wasm(file_content: &[u8]) -> Result<JsValue, JsError> {
+    match parse(file_content) {
+        Ok(bytecode) => {
+            serde_wasm_bindgen::to_value(&bytecode)
+                .map_err(|e| JsError::new(&e.to_string()))
+        },
+        Err(e) => Err(JsError::new(&e)),
+    }
+}
 
 #[allow(unused_imports)]
 use nom::{
